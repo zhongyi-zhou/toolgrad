@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="description"
+        content="ToolGrad: Efficient Tool-use Dataset Generation with Textual “Gradients”">
+  <meta name="keywords"
+        content="LLM, tool-use agents, agent frameworks, datasets, textual 'gradients'">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1">
+  <title>ToolGrad: Efficient Tool-use Dataset Generation with Textual “Gradients”</title>
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async
+          src="https://www.googletagmanager.com/gtag/js?id=G-PYVRSFMDRL"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+
+    function gtag() {
+      dataLayer.push(arguments);
+    }
+
+    gtag('js', new Date());
+
+    gtag('config', 'G-PYVRSFMDRL');
+  </script>
+
+  <!-- <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css"> -->
+  <link rel="stylesheet"
+        href="./static/css/bulma.min.css">
+  <link rel="stylesheet"
+        href="./static/css/fontawesome.all.min.css">
+  <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+
+
+  <!-- Google Fonts -->
+  <link rel="preconnect"
+        href="https://fonts.googleapis.com">
+  <link rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap"
+        rel="stylesheet">
+  <!-- Flickity Carousel CSS -->
+  <link rel="stylesheet"
+        href="https://unpkg.com/flickity@2/dist/flickity.min.css">
+  <link rel="stylesheet"
+        href="./static/css/index.css">
+  <link rel="stylesheet"
+        href="./static/css/toolgrad-card.css">
+
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      corePlugins: { preflight: false }
+    }
+  </script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer
+          src="./static/js/fontawesome.all.min.js"></script>
+  <script src="./static/js/bulma-carousel.min.js"></script>
+  <script src="./static/js/bulma-slider.min.js"></script>
+  <script src="./static/js/index.js"></script>
+
+</head>
+
+<body>
+
+
+
+  <section class="hero">
+    <div class="hero-body">
+      <div class="container is-max-desktop">
+        <div class="columns is-centered">
+          <div class="column has-text-centered">
+            <h1 class="title is-1 publication-title">ToolGrad: Efficient Tool-use Dataset Generation
+              with Textual “Gradients”</h1>
+            <div class="is-size-5 publication-authors">
+              <span class="author-block">
+                <a href="https://zhongyizhou.net/">Zhongyi Zhou</a><sup>1,2,3</sup>,</span>
+              <span class="author-block">
+                <a href="https://uehara-mech.github.io/">Kohei Uehara</a><sup>1</sup>,</span>
+              <span class="author-block">
+                <a href="https://weblab.t.u-tokyo.ac.jp/en/member/haoyu-zhang/">Haoyu
+                  Zhang</a><sup>1</sup>,
+              </span>
+              <span class="author-block">
+                <a href="https://www.jingtao.me/">Jingtao Zhou</a><sup>3</sup>,
+              </span>
+              <span class="author-block">
+                <a href="https://sites.google.com/view/linguedu/home">Lin Gu</a><sup>1,2</sup>,
+              </span>
+              <span class="author-block">
+                <a href="https://duruofei.com/">Ruofei Du</a><sup>3</sup>,
+              </span>
+              <span class="author-block">
+                <a href="https://research.google/people/106689/?&type=google">Zheng
+                  Xu</a><sup>3</sup>,
+              </span>
+              <span class="author-block">
+                <a href="https://www.mi.t.u-tokyo.ac.jp/harada/">Tatsuya Harada</a><sup>1,2</sup>
+              </span>
+            </div>
+
+            <div class="is-size-5 publication-authors">
+              <span class="author-block"><sup>1</sup>The University of Tokyo</span>
+              <span class="author-block"><sup>2</sup>RIKEN AIP</span>
+              <span class="author-block"><sup>3</sup>Google</span>
+
+            </div>
+
+            <div class="column has-text-centered">
+              <div class="publication-links">
+                <!-- PDF Link. -->
+                <span class="link-block">
+                  <a href="https://arxiv.org/"
+                     class="external-link button is-normal is-rounded is-dark">
+                    <span class="icon">
+                      <i class="ai ai-arxiv"></i>
+                    </span>
+                    <span>arXiv</span>
+                  </a>
+                </span>
+                <!-- Code Link. -->
+                <span class="link-block">
+                  <a href="https://github.com/zhongyi-zhou/toolgrad"
+                     class="external-link button is-normal is-rounded is-dark">
+                    <span class="icon">
+                      <i class="fab fa-github"></i>
+                    </span>
+                    <span>Code</span>
+                  </a>
+                </span>
+                <!-- Dataset Link. -->
+                <span class="link-block">
+                  <a href=""
+                     class="external-link button is-normal is-rounded is-dark">
+                    <span class="icon">
+                      <img src="./static/images/hf.svg">
+                    </span>
+                    <span>Dataset (TBD)</span>
+                  </a>
+                </span>
+                <!-- Dataset Link. -->
+                <span class="link-block">
+                  <a href=""
+                     class="external-link button is-normal is-rounded is-dark">
+                    <span class="icon">
+                      <img src="./static/images/hf.svg">
+                    </span>
+                    <span>Models (TBD)</span>
+                  </a>
+                </span>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="hero teaser">
+    <div class="container is-max-desktop">
+      <div class="hero-body">
+        <img id="teaser"
+             src="./static/images/teaser-1.jpg"
+             alt="ToolGrad teaser image"
+             class="is-fullwidth">
+        <h2 class="subtitle has-text-centered">
+          ToolGrad inverts the tool-use data generation pipeline.
+          Our answer-first tool-use data generation framework leads to 100% pass rate and
+          lower cost.
+        </h2>
+      </div>
+    </div>
+  </section>
+
+  <!-- This is the section you should copy into your website -->
+  <section class="hero is-light is-small">
+    <div class="hero-body">
+      <div class="container"
+           id="toolgrad-showcase">
+        <h2 class="title is-3 has-text-centered">Generated Data Samples</h2>
+        <p class="">Our AI understands requests, plans, and uses
+          tools to find answers.</p>
+
+        <!-- Carousel container -->
+        <div class="main-carousel"
+             data-flickity='{ "cellAlign": "center", "contain": true, "wrapAround": true, "prevNextButtons": true, "pageDots": false }'>
+
+          <!-- Card 1: Financial Analysis -->
+          <div class="carousel-cell">
+            <div class="scene">
+              <div class="card">
+                <!-- Front of the Card -->
+                <div
+                     class="card__face card__face--front rounded-xl shadow-lg bg-white p-6 border border-slate-100">
+                  <div>
+                    <h3 class="font-semibold text-slate-500 text-sm">TLDR:</h3>
+                    <p class="mt-2 text-xl font-medium">"Get a financial overview of Apple (AAPL)."
+                    </p>
+                    <hr class="my-4">
+                    <h3 class="font-semibold text-slate-500 text-sm">Query:</h3>
+                    <p class="mt-2 text-sm text-slate-600">"Provide a comprehensive financial and
+                      operational overview of Apple Inc. (AAPL), including its
+                      latest quarterly balance sheet details, recent stock price trends over the
+                      past two years, current
+                      analyst recommendation trends, ownership structure by major shareholder types,
+                      key suppliers and
+                      customers in its supply chain, current U.S. prime loan rates for context, and
+                      a list of available
+                      forex symbols."</p>
+                  </div>
+                  <button
+                          class="flip-btn w-full mt-4 bg-slate-800 text-white font-semibold py-2 px-4 rounded-lg hover:bg-slate-900 transition-colors">
+                    See Tool Usage
+                  </button>
+                </div>
+                <!-- Back of the Card -->
+                <div
+                     class="card__face card__face--back rounded-xl shadow-lg bg-slate-800 text-white p-6 border border-slate-700">
+                  <div class="flex-grow overflow-y-auto">
+                    <h3 class="font-semibold text-slate-400 text-sm mb-2">Tool Usage:</h3>
+                    <table class="w-full table-fixed text-left text-xs font-mono">
+                      <colgroup>
+                        <col class="w-1/5">
+                        <col class="w-1/5">
+                        <col class="w-3/5">
+                      </colgroup>
+                      <thead>
+                        <!-- apply bg & text color on the TR, not the THEAD -->
+                        <tr class="bg-slate-900/20">
+                          <th class="p-2 uppercase tracking-wide text-slate-100">Tool Name</th>
+                          <th class="p-2 uppercase tracking-wide text-slate-100">Tool Input</th>
+                          <th class="p-2 uppercase tracking-wide text-slate-100">Tool Response</th>
+                        </tr>
+                      </thead>
+                      <tbody class="bg-slate-900/20">
+                        <tr class="border-b border-slate-700">
+                          <td class="p-2 align-top break-words whitespace-normal">
+                            Finance-mboum_finance-stock_balance_sheet_stock
+                          </td>
+                          <td class="p-2 align-top">{ "symbol": "AAPL" }</td>
+                          <td class="p-2 align-top">{ "balanceSheetHistoryQuarterly": {
+                            "balanceSheetStatements": [ … ] }
+                            }</td>
+                        </tr>
+                        <tr class="border-b border-slate-700">
+                          <td class="p-2 align-top break-words whitespace-normal">
+                            Finance-yh_finance_complete-recommendation_trends</td>
+                          <td class="p-2 align-top">{ "symbol": "AAPL" }</td>
+                          <td class="p-2 align-top">{ "recommendationTrend": { "trend": [ … ],
+                            "maxAge": 86400 } }</td>
+                        </tr>
+                        <tr class="border-b border-slate-700">
+                          <td class="p-2 align-top break-words whitespace-normal">
+                            Finance-u_s_economic_indicators-prime_loan_rates
+                          </td>
+                          <td class="p-2 align-top">{ }</td>
+                          <td class="p-2 align-top">{ "Selected Interest Rates": { "1955-08-04":
+                            3.25, …, "1955-11-14":
+                            3.5 } }</td>
+                        </tr>
+                        <tr class="border-b border-slate-700">
+                          <td class="p-2 align-top break-words whitespace-normal">
+                            Finance-seeking_alpha_finance-symbols_shares
+                          </td>
+                          <td class="p-2 align-top">{ "ticker_slug": "AAPL" }</td>
+                          <td class="p-2 align-top">{ "data": [ { "id":
+                            "3827c8b7-bee5-48c6-b524-256c59fe1e7f", "type":
+                            "ownHoldingCompanySummary", "attributes": { "ownertypeid":
+                            "institutions", "sharesheld":
+                            9164574189, "percentage": 61.00738685666086 } }, … ], "meta": {
+                            "totalShares": 15022073000 } }
+                          </td>
+                        </tr>
+                        <tr class="border-b border-slate-700">
+                          <td class="p-2 align-top break-words whitespace-normal">
+                            Finance-corporate_supply_chain-supply_chain</td>
+                          <td class="p-2 align-top">{ "ticker": "AAPL" }</td>
+                          <td class="p-2 align-top">[ { "Ticker": "PKXFF", "Full Name": "POSCO",
+                            "Relationship":
+                            "Suppliers" }, … ]</td>
+                        </tr>
+                        <tr class="border-b border-slate-700">
+                          <td class="p-2 align-top break-words whitespace-normal">
+                            Finance-stock_prices-get_2_year_historical_monthly_prices</td>
+                          <td class="p-2 align-top">{ "ticker": "AAPL" }</td>
+                          <td class="p-2 align-top">{ "2021-08-01": { "Open": 144.6647, "High":
+                            151.7122, "Low": 142.8263,
+                            "Close": 150.0714, "Dividends": 0.0, "Stock Splits": 0, "Volume":
+                            1461542800.0 }, … }</td>
+                        </tr>
+                        <tr>
+                          <td class="p-2 align-top break-words whitespace-normal">
+                            Finance-real_time_quotes-forex_symbols</td>
+                          <td class="p-2 align-top ">{ }</td>
+                          <td class="p-2 align-top">["EUR","MYR","TZS","KZT","CNY",…,"KYD"]</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <button
+                          class="flip-btn w-full mt-4 bg-slate-100 text-slate-800 font-semibold py-2 px-4 rounded-lg hover:bg-white transition-colors">
+                    Show Result
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 2: YouTube Video -->
+          <div class="carousel-cell">
+            <div class="scene">
+              <div class="card">
+                <!-- Front of the Card -->
+                <div
+                     class="card__face card__face--front rounded-xl shadow-lg bg-white p-6 border border-slate-100">
+                  <div>
+                    <h3 class="font-semibold text-slate-500 text-sm">TLDR:</h3>
+                    <p class="mt-2 text-xl font-medium">"Get stats and comments for 'Never Gonna
+                      Give You Up' plus current US trends."</p>
+                    <hr class="my-4">
+                    <h3 class="font-semibold text-slate-500 text-sm">Query:</h3>
+                    <p class="mt-2 text-sm text-slate-600">"Can you provide detailed information
+                      about the YouTube video ‘Never Gonna Give You Up’ by Rick
+                      Astley, including its video details, latest comments, and popularity metrics?
+                      Also, can you show me
+                      some trending videos in the US currently? Additionally, please provide a list
+                      of recent YouTube
+                      influencer search queries."</p>
+                  </div>
+                  <button
+                          class="flip-btn w-full mt-4 bg-slate-800 text-white font-semibold py-2 px-4 rounded-lg hover:bg-slate-900 transition-colors">
+                    See Tool Usage
+                  </button>
+                </div>
+                <!-- Back of the Card -->
+                <div
+                     class="card__face card__face--back rounded-xl shadow-lg bg-slate-800 text-white p-6 border border-slate-700">
+                  <div class="flex-grow overflow-y-auto">
+                    <h3 class="font-semibold text-slate-400 text-sm mb-2">Tool Usage:</h3>
+                    <table class="w-full table-fixed text-left text-xs font-mono">
+                      <colgroup>
+                        <col class="w-1/5"> <!-- Tool Name -->
+                        <col class="w-1/5"> <!-- Tool Input -->
+                        <col class="w-3/5"> <!-- Tool Response -->
+                      </colgroup>
+                      <thead>
+                        <tr class="bg-slate-900/20">
+                          <th class="p-2 uppercase tracking-wide text-slate-100">Tool Name</th>
+                          <th class="p-2 uppercase tracking-wide text-slate-100">Tool Input</th>
+                          <th class="p-2 uppercase tracking-wide text-slate-100">Tool Response</th>
+                        </tr>
+                      </thead>
+                      <tbody class="bg-slate-900/20">
+                        <tr class="border-b border-slate-700">
+                          <td class="p-2 align-top break-words whitespace-normal">
+                            Food-pizza_and_desserts-all_pizza_data
+                          </td>
+                          <td class="p-2 align-top">{}</td>
+                          <td class="p-2 align-top">
+                            [{'id':1,'name':'Margherita',…}, {'id':2,'name':'Tandoori Paneer',…}, …]
+                          </td>
+                        </tr>
+                        <tr class="border-b border-slate-700">
+                          <td class="p-2 align-top break-words whitespace-normal">
+                            eCommerce-unofficial_shein-products_search
+                          </td>
+                          <td class="p-2 align-top">
+                            { "keywords":"vegetarian pizza", "limit":5, … }
+                          </td>
+                          <td class="p-2 align-top">
+                            {'code':'0','msg':'ok','info':{'products':[{'goods_id':'56304471',…},…]}}
+                          </td>
+                        </tr>
+                        <tr class="border-b border-slate-700">
+                          <td class="p-2 align-top break-words whitespace-normal">
+                            Food-tasty-tags_list
+                          </td>
+                          <td class="p-2 align-top">{}</td>
+                          <td class="p-2 align-top">
+                            {'count':458,'results':[{'id':64444,'name':'north_american',…},…]}
+                          </td>
+                        </tr>
+                        <tr class="border-b border-slate-700">
+                          <td class="p-2 align-top break-words whitespace-normal">
+                            Food-pizza_and_desserts-all_desserts_data
+                          </td>
+                          <td class="p-2 align-top">{}</td>
+                          <td class="p-2 align-top">
+                            [{"id":1,"name":"Choco Sundae",…}, …]
+                          </td>
+                        </tr>
+                        <tr class="border-b border-slate-700">
+                          <td class="p-2 align-top break-words whitespace-normal">
+                            eCommerce-real_time_amazon_data-search
+                          </td>
+                          <td class="p-2 align-top">
+                            { "query":"vegetarian pizza", … }
+                          </td>
+                          <td class="p-2 align-top">
+                            {'status':'OK','data':{'total_products':173, …}}
+                          </td>
+                        </tr>
+                        <tr>
+                          <td class="p-2 align-top break-words whitespace-normal">
+                            eCommerce-sephora-categories_list_root_deprecated
+                          </td>
+                          <td class="p-2 align-top">{}</td>
+                          <td class="p-2 align-top">
+                            {'breadcrumbs':[{'name':'Shop',…}], …}
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+
+                  </div>
+                  <button
+                          class="flip-btn w-full mt-4 bg-slate-100 text-slate-800 font-semibold py-2 px-4 rounded-lg hover:bg-white transition-colors">
+                    Show Result
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 3: Vegeterian Food -->
+          <div class="carousel-cell">
+            <div class="scene">
+              <div class="card">
+                <!-- Front of the Card -->
+                <div
+                     class="card__face card__face--front rounded-xl shadow-lg bg-white p-6 border border-slate-100">
+                  <div>
+                    <h3 class="font-semibold text-slate-500 text-sm">TLDR:</h3>
+                    <p class="mt-2 text-xl font-medium">"List vegetarian pizzas and desserts at
+                      Pizza Hut plus online options."</p>
+                    <hr class="my-4">
+                    <h3 class="font-semibold text-slate-500 text-sm">Query:</h3>
+                    <p class="mt-2 text-sm text-slate-600">"I’m interested in vegetarian pizzas and
+                      related desserts. Can you provide details on vegetarian
+                      pizzas available at Pizza Hut, including names, descriptions, prices, and
+                      images? Also, could you
+                      suggest some vegetarian pizza products available online from platforms like
+                      Shein and Amazon, with
+                      relevant pricing and images? Additionally, could you list some
+                      vegetarian-friendly food tags or
+                      cuisine types? Lastly, I’d like to know about dessert options available at
+                      Pizza Hut."</p>
+                  </div>
+                  <button
+                          class="flip-btn w-full mt-4 bg-slate-800 text-white font-semibold py-2 px-4 rounded-lg hover:bg-slate-900 transition-colors">
+                    See Tool Usage
+                  </button>
+                </div>
+                <!-- Back of the Card -->
+                <div
+                     class="card__face card__face--back rounded-xl shadow-lg bg-slate-800 text-white p-6 border border-slate-700">
+                  <div class="flex-grow overflow-y-auto">
+                    <h3 class="font-semibold text-slate-400 text-sm mb-2">Tool Usage:</h3>
+                    <table class="w-full table-fixed text-left text-xs font-mono">
+                      <colgroup>
+                        <col class="w-1/5">
+                        <col class="w-1/5">
+                        <col class="w-3/5">
+                      </colgroup>
+                      <thead>
+                        <tr class="bg-slate-900/20">
+                          <th class="p-2 uppercase tracking-wide text-slate-100">Tool Name</th>
+                          <th class="p-2 uppercase tracking-wide text-slate-100">Tool Input</th>
+                          <th class="p-2 uppercase tracking-wide text-slate-100">Tool Response</th>
+                        </tr>
+                      </thead>
+                      <tbody class="bg-slate-900/20">
+                        <tr class="border-b border-slate-700">
+                          <td class="p-2 align-top break-words whitespace-normal">
+                            Food-pizza_and_desserts-all_pizza_data
+                          </td>
+                          <td class="p-2 align-top">
+                            {}
+                          </td>
+                          <td class="p-2 align-top">
+                            [{'id': 1, 'name': 'Margherita', 'veg': True, …}, …]
+                          </td>
+                        </tr>
+                        <tr class="border-b border-slate-700">
+                          <td class="p-2 align-top break-words whitespace-normal">
+                            eCommerce-unofficial_shein-products_search
+                          </td>
+                          <td class="p-2 align-top">
+                            {
+                            "keywords": "vegetarian pizza",
+                            "limit": 5,
+                            "page": 1,
+                            "max_price": 100,
+                            "min_price": 0,
+                            "filter": "",
+                            "sort": 0,
+                            "language": "en",
+                            "cat_id": "",
+                            "country": "US",
+                            "currency": "USD"
+                            }
+                          </td>
+                          <td class="p-2 align-top">
+                            {'code':'0','msg':'ok','info':{'products':[{'goods_id':'56304471',…},…]}}
+                          </td>
+                        </tr>
+                        <tr class="border-b border-slate-700">
+                          <td class="p-2 align-top break-words whitespace-normal">
+                            Food-tasty-tags_list
+                          </td>
+                          <td class="p-2 align-top">
+                            {}
+                          </td>
+                          <td class="p-2 align-top">
+                            {'count': 458, 'results': [{…}, …]}
+                          </td>
+                        </tr>
+                        <tr class="border-b border-slate-700">
+                          <td class="p-2 align-top break-words whitespace-normal">
+                            Food-pizza_and_desserts-all_desserts_data
+                          </td>
+                          <td class="p-2 align-top">
+                            {}
+                          </td>
+                          <td class="p-2 align-top">
+                            [{"id":1,"name":"Choco Sundae",…}, …]
+                          </td>
+                        </tr>
+                        <tr class="border-b border-slate-700">
+                          <td class="p-2 align-top break-words whitespace-normal">
+                            eCommerce-real_time_amazon_data-search
+                          </td>
+                          <td class="p-2 align-top">
+                            {
+                            "query": "vegetarian pizza",
+                            "brand": "",
+                            "min_price": 0,
+                            "max_price": 100,
+                            "country": "US",
+                            "category_id": "aps",
+                            "sort_by": "RELEVANCE",
+                            "page": "1"
+                            }
+                          </td>
+                          <td class="p-2 align-top">
+                            {'status':'OK','data':{'total_products':173,…}}
+                          </td>
+                        </tr>
+                        <tr>
+                          <td class="p-2 align-top break-words whitespace-normal">
+                            eCommerce-sephora-categories_list_root_deprecated
+                          </td>
+                          <td class="p-2 align-top">
+                            {}
+                          </td>
+                          <td class="p-2 align-top">
+                            {'breadcrumbs':[{'name':'Shop',…}],…}
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+
+                  </div>
+                  <button
+                          class="flip-btn w-full mt-4 bg-slate-100 text-slate-800 font-semibold py-2 px-4 rounded-lg hover:bg-white transition-colors">
+                    Show Result
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div> <!-- /carousel -->
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container is-max-desktop">
+
+
+
+      <!-- Animation. -->
+      <div class="columns is-centered">
+        <div class="column is-full-width">
+          <h2 class="title is-3">ToolGrad</h2>
+
+          <!-- Interpolating. -->
+          <h3 class="title is-4">Analogy to ML and TextGrad</h3>
+          <div class="content has-text-justified">
+            <div class="has-text-centered">
+              <img class="table-teaser"
+                   src="./static/images/table.png"
+                   alt="Analogy to ML and TextGrad">
+            </div>
+          </div>
+
+          <h3 class="title is-4">Agentic Framework Design</h3>
+          <div class="content has-text-justified">
+            <div class="has-text-centered">
+              <img class="table-teaser"
+                   src="./static/images/framework.svg"
+                   alt="Agentic Framework Design">
+            </div>
+
+          </div>
+
+
+        </div>
+      </div>
+      <!--/ Animation. -->
+
+
+    </div>
+  </section>
+
+
+  <section class="section"
+           id="BibTeX">
+    <div class="container is-max-desktop content">
+      <h2 class="title">BibTeX</h2>
+      <pre><code>@article{zhou2025toolgrad,
+    title={ToolGrad: Efficient Tool-use Dataset Generation with Textual “Gradients”},
+    author={Zhongyi Zhou and Kohei Uehara and Haoyu Zhang and Jingtao Zhou and Lin Gu and Ruofei Du and Zheng Xu and Tatsuya Harada},
+    year={2025},
+    archivePrefix={arXiv},
+}</code></pre>
+    </div>
+  </section>
+
+
+  <footer class="footer">
+    <div class="container">
+      <div class="columns is-centered">
+        <div class="column is-8">
+          <div class="content">
+            <p>
+              This website is licensed under a <a rel="license"
+                 href="http://creativecommons.org/licenses/by-sa/4.0/">Creative
+                Commons Attribution-ShareAlike 4.0 International License</a>.
+            </p>
+            <p>
+              This website design is based on <a
+                 href="https://github.com/nerfies/nerfies.github.io">the nerfies project</a>.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+</body>
+
+<!-- Flickity Carousel JS -->
+<script src="https://unpkg.com/flickity@2/dist/flickity.pkgd.min.js"></script>
+<script src="./static/js/toolgrad-card.js"></script>
+
+</html>
