@@ -104,3 +104,17 @@ python src/eval.py --pred_model toolgrad-1b \
   --num_process 16 
 ```
 You should be able to see a new result with similar values of ours. Note that you can adjust the `num_process` dependent on your OpenAI API RPM.
+
+
+## BibTex
+```bibtex
+@misc{zhou2025toolgradefficienttoolusedataset,
+      title={ToolGrad: Efficient Tool-use Dataset Generation with Textual "Gradients"}, 
+      author={Zhongyi Zhou and Kohei Uehara and Haoyu Zhang and Jingtao Zhou and Lin Gu and Ruofei Du and Zheng Xu and Tatsuya Harada},
+      year={2025},
+      eprint={2508.04086},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL},
+      url={https://arxiv.org/abs/2508.04086}, 
+}
+```
