@@ -1,12 +1,13 @@
 # ToolGrad: Efficient Tool-use Dataset Generation with Textual "Gradients"
 <!--- BADGES: START --->
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](#colab)
+
 [![GitHub license](https://img.shields.io/badge/License-CC--BY%204.0-blue.svg)][#license]
 [![Arxiv](https://img.shields.io/badge/arXiv-2508.04086-B31B1B.svg)][#arxiv-paper] 
 [![PyPI](https://img.shields.io/static/v1?label=PyPI&message=toolgrad&color=lightgrey)][#pypi-package] 
 <!-- Replace the PyPI badge with ToolGrad later -->
 
 TODOs:
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](#colab)
 [![Dataset on HF](https://img.shields.io/badge/Dataset-on%20Hugging%20Face-FF6C37?logo=HuggingFace)][#dataset-hf]
 [![Model on HF](https://img.shields.io/badge/Model-on%20Hugging%20Face-FF6C37?logo=HuggingFace)][#model-hf]
 
@@ -22,6 +23,14 @@ TODOs:
 <!--- BADGES: END --->
 
 This is an official repo for <ToolGrad: Efficient Tool-use Dataset Generation with Textual “Gradients”>.
+
+<p align="center">
+  <img src="images/teaser-1.jpg" alt="demo"/>
+</p>
+
+<p align="center">
+  <img src="images/table.png" alt="demo"/>
+</p>
 
 ## Get Started: A Quick Demo
 
@@ -42,6 +51,11 @@ python examples/mcp_filesystem.py
 ```
 
 ## Reproduction of Dataset Generation
+
+<p align="center">
+  <img src="images/framework.svg" alt="demo"/>
+</p>
+
 ### Step 0: ToolBench API Key
 You need to first obtain a ToolBench API key by following their instruction:
 - https://github.com/OpenBMB/ToolBench
