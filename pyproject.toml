@@ -1,0 +1,46 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "toolgrad"
+version = "0.1.1"
+description = "Official Repo for ToolGrad: Efficient Tool-use Dataset Generation with Textual “Gradients”"
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "CC-BY-4.0" }
+authors = [{ name = "Zhongyi Zhou" }]
+dependencies = [
+  "numpy>=1.26",
+  "langgraph>=0.2.19",
+  "langchain-core>=0.3.54",
+  "langchain>=0.3.18",
+  "langchain-openai>=0.3.3",
+  "pydantic>=2.9.1",
+  "langchain-community>0.3.17",
+  "pytz>=2025.1",
+]
+[project.optional-dependencies]
+dev = ["pytest>=6.0", "yapf", "isort", "flake8"]
+
+[tool.yapf]
+based_on_style = "google"
+indent_width = 2
+
+[tool.isort]
+profile = "google"
+
+[tool.flake8]
+max-line-length = 88
+extend-ignore = [
+  "E203", # whitespace before ':'  (YAPF/Black handle this)
+  "W503", # line break before binary operator
+]
+
+[tool.setuptools.packages.find]
+include = ["toolgrad", "toolgrad.*"]
+exclude = ["backups", "backups.*"]
+
+[tool.setuptools.package-data]
+"toolgrad.data.toolbench" = ["data/toolbench/*.json", "data/toolbench/*.jsonl"]
+"toolgrad.configs" = ["configs/*.gin"]

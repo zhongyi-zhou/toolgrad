@@ -1,0 +1,4 @@
+create_llm.temp = 0.7
+create_llm.provider = 'openai'
+create_llm.model = 'gpt-4.1-mini'
+
