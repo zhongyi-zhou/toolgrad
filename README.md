@@ -1,10 +1,18 @@
-# ToolGrad: Efficient Tool-use Dataset Generation with Textual "Gradients"
+# ToolGrad: Efficient Tool-use Dataset Generation with Textual "Gradients" (ACL 26 Finding)
 <!--- BADGES: START --->
-
-[![GitHub license](https://img.shields.io/badge/License-CC--BY%204.0-blue.svg)][#license]
+[![GitHub license](https://img.shields.io/badge/License-Apache_2.0-blue.svg)][#license]
 [![Arxiv](https://img.shields.io/badge/arXiv-2508.04086-B31B1B.svg)][#arxiv-paper] 
 [![PyPI](https://img.shields.io/static/v1?label=PyPI&message=toolgrad&color=lightgrey)][#pypi-package] 
 <!-- Replace the PyPI badge with ToolGrad later -->
+
+> [!WARNING]
+> **Notes**: The current repo contains out-of-dated code. We will actively update the repo to align with our paper on ACL 2026. The following is a roadmap.
+> 
+> - [ ] Update data generation pipeline
+> - [ ] Update toolgrad package
+> - [ ] post-training code
+> - [ ] evaluate code
+
 
 TODOs:
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](#colab)
@@ -14,7 +22,7 @@ TODOs:
 
 <!-- Replace the PyPI link with ToolGrad later -->
 [#pypi-package]: https://pypi.org/project/toolgrad
-[#license]: https://img.shields.io/badge/license-CC--BY--NC%204.0-blue
+[#license]: LICENSE
 [#arxiv-paper]: http://arxiv.org/abs/2508.04086
 
 [#dataset-hf]: https://huggingface.co/datasets/
