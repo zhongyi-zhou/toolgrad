@@ -37,6 +37,12 @@ def create_args():
       default=123,
       help='Seed for sampling APIs.',
   )
+  parser.add_argument(
+      '--cfg',
+      type=str,
+      default='configs/gemini-2.5-lite.gin',
+      help='gin config file path',
+  )
   return parser.parse_args()
 
 
@@ -46,8 +52,8 @@ if __name__ == '__main__':
         "Please set the environment variable TOOLBENCH_KEY to your ToolBench API key."
     )
   args = create_args()
-  cfg_path = "examples/configs/default.gin"
-  output_dir = "examples/outputs/"
+  cfg_path = args.cfg
+  output_dir = "outputs/"
   gin.parse_config_file(cfg_path)
   app = tog.prebuilt.create_graph_on_toolbench(
       sample_seed=args.seed,
@@ -79,4 +85,4 @@ if __name__ == '__main__':
   save_path = f"{output_dir}/seed={args.seed}__iter={args.iter}__num_apis={args.num_apis}.json"
   os.makedirs(output_dir, exist_ok=True)
   with open(save_path, "w") as json_file:
-    json.dump(data_sample.dict(), json_file, indent=2)
+    json.dump(data_sample.model_dump(), json_file, indent=2)

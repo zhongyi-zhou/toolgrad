@@ -1,5 +1,8 @@
-from langchain.tools import StructuredTool
-from langchain_mcp_adapters.client import MultiServerMCPClient
+# from langchain.tools import StructuredTool
+try:
+    from langchain_mcp_adapters.client import MultiServerMCPClient
+except ImportError:
+    MultiServerMCPClient = None
 from langchain_core.tools import StructuredTool, ToolException
 from typing import Any
 import asyncio
@@ -8,25 +11,31 @@ import os
 
 
 def get_default_mcp_dict() -> dict:
-  this_dir = os.path.dirname(__file__)
+  filesystem_path = get_example_filesystem_dir()
   return {
       "filesystem": {
           "command": "npx",
           "args": [
-              "-y", "@modelcontextprotocol/server-filesystem",
-              os.path.join(this_dir, "filesystem")
+              "-y",
+              "@modelcontextprotocol/server-filesystem",
+              filesystem_path,
           ],
           "transport": "stdio",
       },
   }
 
 
+def get_example_filesystem_dir() -> str:
+  import toolgrad
+  toolgrad_root = toolgrad.__path__[0]
+  filesystem_path = os.path.join(toolgrad_root, "utils", "filesystem")
+  return filesystem_path
+
+
 # Read-only access
-BLOCKED_APIS = [
-    "write_file",
-    "edit_file",
-    "create_directory",
-    "move_file",
+ALLOWED_APIS = [
+    'read_file', 'list_directory', 'read_text_file', 'directory_tree',
+    'read_multiple_files'
 ]
 
 
@@ -35,19 +44,69 @@ class JSONWrappingTool(StructuredTool):
   def run(self, tool_input, config=None, **kwargs):
     try:
       result = super().run(tool_input, config, **kwargs)
-      return {"error": "", "response": result[0]}
+      # Handle MCP results that may be arrays of content blocks
+      if isinstance(result, list):
+        # Extract text content from MCP response format
+        content = "\n".join([
+            str(item.get("text", item)) if isinstance(item, dict) else str(item)
+            for item in result
+        ])
+        return {"error": "", "response": content}
+      return {"error": "", "response": str(result)}
     except ToolException as te:
       return {"error": str(te), "response": ""}
+    except Exception as e:
+      return {"error": str(e), "response": ""}
 
   async def arun(self, tool_input, config=None, **kwargs):
     try:
       result = await super().arun(tool_input, config=config, **kwargs)
-      return {
-          "error": "",
-          "response": result[0],
-      }
+      # Handle MCP results that may be arrays of content blocks
+      if isinstance(result, list):
+        # Extract text content from MCP response format
+        content = "\n".join([
+            str(item.get("text", item)) if isinstance(item, dict) else str(item)
+            for item in result
+        ])
+        return {"error": "", "response": content}
+      return {"error": "", "response": str(result)}
     except ToolException as te:
       return {"error": str(te), "response": ""}
+    except Exception as e:
+      return {"error": str(e), "response": ""}
+
+
+def _wrap_with_path_prefix(tool: StructuredTool, base_path: str) -> StructuredTool:
+  """Wrap a tool's function to automatically prepend base_path to 'path' or 'paths' arguments if they are relative."""
+  
+  original_func = tool.func
+  original_coroutine = tool.coroutine if hasattr(tool, 'coroutine') else None
+
+  def wrap_args(kwargs):
+    new_kwargs = kwargs.copy()
+    if 'path' in new_kwargs and isinstance(new_kwargs['path'], str):
+      if not os.path.isabs(new_kwargs['path']):
+        new_kwargs['path'] = os.path.join(base_path, new_kwargs['path'])
+    if 'paths' in new_kwargs and isinstance(new_kwargs['paths'], list):
+       new_kwargs['paths'] = [os.path.join(base_path, p) if not os.path.isabs(p) else p for p in new_kwargs['paths']]
+    return new_kwargs
+
+  def new_func(**kwargs):
+    return original_func(**wrap_args(kwargs))
+
+  if original_coroutine:
+    async def new_coroutine(**kwargs):
+      return await original_coroutine(**wrap_args(kwargs))
+  else:
+    new_coroutine = None
+
+  return StructuredTool(
+      name=tool.name,
+      description=tool.description,
+      func=new_func,
+      coroutine=new_coroutine,
+      args_schema=tool.args_schema,
+  )
 
 
 def get_mcp_apis(
@@ -58,16 +117,12 @@ def get_mcp_apis(
 
   client = MultiServerMCPClient(mcp_dict)
   tools = asyncio.run(client.get_tools())
-  tools = [tool for tool in tools if tool.name not in BLOCKED_APIS]
-  tools = [
-      JSONWrappingTool(
-          name=my_tool.name,
-          description=my_tool.description,
-          args_schema=my_tool.args_schema,
-          func=my_tool.func,
-          coroutine=my_tool.coroutine,  # carry over the MCP async entrypoint
-      ) for my_tool in tools
-  ]
+  tools = [tool for tool in tools if tool.name in ALLOWED_APIS]
+
+  # Wrap tools to prepend filesystem path
+  filesystem_path = get_example_filesystem_dir()
+  tools = [_wrap_with_path_prefix(tool, filesystem_path) for tool in tools]
+
   print(f"Found {len(tools)} APIs in MCP.")
   if num_apis > len(tools) or num_apis <= 0:
     raise ValueError(

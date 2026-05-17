@@ -4,8 +4,12 @@ import json
 from importlib import resources
 
 
-def load_filtered_v1():
-  with resources.open_text("toolgrad.data.toolbench", "filtered_v1.json") as fp:
+from toolgrad.utils.toolbench import toolbench_data_utils
+
+
+def load_data(version: str = toolbench_data_utils.DEFAULT_VERSION):
+  pkg = f"toolgrad.data.toolbench.{version}"
+  with resources.open_text(pkg, "data.json") as fp:
     data = json.load(fp)
   return data
 

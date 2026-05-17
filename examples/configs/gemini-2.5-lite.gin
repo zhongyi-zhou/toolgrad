@@ -1,0 +1,10 @@
+create_llm.temp = 1.0
+create_llm.provider = 'google'
+create_llm.model = 'gemini-2.5-flash-lite'
+
+get_llm_codename.name = "google_genai:gemini-2.5-flash-lite"
+
+# Gemini 2.5 Flash Lite pricing (update based on actual Google pricing)
+# Prices are in USD per 1 million tokens
+create_callback_handler.prompt_token_cost_per_million = 0.1
+create_callback_handler.completion_token_cost_per_million = 0.4

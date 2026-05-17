@@ -44,89 +44,66 @@ This is an official repo for <ToolGrad: Efficient Tool-use Dataset Generation wi
 
 ### Step 0: Install packages
 
+Install `nvm` for MCP service:
 ```bash
-git clone https://github.com/zhongyi-zhou/toolgrad.git
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
+nvm install 20
+nvm alias default 20
+
+# verify npx
+npx --version
+```
+
+Clone this repo and setup the uv env:
+
+```bash
 cd toolgrad
-conda env create -f environment.yml
-conda activate toolgrad
+uv venv
+uv sync
+source .venv/bin/activate
 ```
 
 ### Step 1: launch your first ToolGrad framework on a MCP service
 
 ```bash
+# If you have no Gemini API key in your environment,
+export GEMINI_API_KEY=YOUR_GEMINI_KEY
+
 export PYTHONPATH=./
 python examples/mcp_filesystem.py
 ```
 
-## Reproduction of Dataset Generation
+During the execution, you should be able to see some useful logs to better understand the ToolGrad framework.
 
-<p align="center">
-  <img src="images/framework.svg" alt="demo"/>
-</p>
-
-### Step 0: ToolBench API Key
-You need to first obtain a ToolBench API key by following their instruction:
-- https://github.com/OpenBMB/ToolBench
-
-
-Note: The API key is necessary for the following procedures.
-### Step 1: ToolBench Setups
+For example, the following is an example log of the API proposer.
 ```bash
-export TOOLBENCH_KEY=YOURTOOLBENCHKEY
+INFO:root:[Iteration 2] Proposed 3 API proposals
+INFO:root:  Proposal 1 (proposal_1): Read the content of the 'favorite_books.txt' file.
+INFO:root:    └─ read_text_file
+INFO:root:  Proposal 2 (proposal_2): Read the contents of 'favorite_books.txt', 'favorite_cities.txt', and 'favorite_songs.txt' simultaneously.
+INFO:root:    └─ read_multiple_files
+INFO:root:  Proposal 3 (proposal_3): List the contents of the current directory.
+INFO:root:    └─ list_directory
 ```
 
-You also need to setup the ToolBench API database:
-- Unzip `tools.zip` ([Google Drive](https://drive.google.com/file/d/1pM161RiqwEdE6L-kaTS4P0OpYB2I_Phl/view?usp=sharing)) and it will show a `tools/` folder.
-- add this path to the environ as follow
+The following is an example log of API executor.
 ```bash
-export TOOLBENCH_LIBRARY_ROOT=YOUR_PATH/TO/TOOLS
+INFO:root:[Iteration 2] Executed 3 proposals: 3 successful, 0 failed
+INFO:root:  ✓ proposal_1: 1 tool call(s)
+INFO:root:      Tool: read_text_file
+INFO:root:      Input: {'path': 'favorite_books.txt'}
+INFO:root:  ✓ proposal_2: 1 tool call(s)
+INFO:root:      Tool: read_multiple_files
+INFO:root:      Input: {'paths': ['favorite_books.txt', 'favorite_cities.txt', 'favorite_songs.txt']}
+INFO:root:  ✓ proposal_3: 1 tool call(s)
+INFO:root:      Tool: list_directory
+INFO:root:      Input: {'path': '.'}
 ```
 
+After the execution, you should be able to see the output data in [examples/outputs/](examples/outputs/). It should look similar to [examples/outputs/trace_example/00123.json](examples/outputs/trace_example/00123.json) and [examples/outputs/example_seed=123__iter=3__num_apis=5.json](examples/outputs/example_seed=123__iter=3__num_apis=5.json).
 
-### Step 2: Generate your first ToolGrad sample on the ToolBench API database
-
-```bash
-export PYTHONPATH=./
-python examples/toolbench.py
-```
-You will then find a new json file under `examples/outputs/`. `examples/example_outputs/seed=123__iter=5__num_apis=50.json` is an example that we generated.
-
-ToolGrad-5K is composed of 5k data generation sessions with different seed.
-It takes ~250 USD to generate the full 5K dataset, using gpt-4.1-mini.
-## Evaluation
-
-First download the dataset from [Google Drive](https://drive.google.com/file/d/1fogq9N9P02I0SIycnDjjdLDC4TmR4BCz/view?usp=sharing) and unzip it.
-You should be able see a folder structure as follows:
-```
-ToolGrad-5k  
-├── data  
-├── metadata  
-├── prediction  
-└── sft_data  
-```
-The `prediction` folder stores the prediction of three ToolGrad models on the test set. You can run the following command to perform evaluation with LLM judges:
-```
-python src/eval.py --pred_model toolgrad-1b --dataset ~/YOUR_DATASET_STORAGE_DIR/ToolGrad-5k/
-```
-You should see the following messages in CMD.
-```
-judge model: gpt-4.1
-100%|████████████████████████████████████████████████████████████████████████████| 500/500 [00:00<00:00, 1384.60it/s]
-               Recall  Success Rate     QoR
-Model                                      
-toolgrad-1b  0.987917      0.955482  93.702
-```
-This is an exact reproduction of our results.
-
-If you wish to run the LLM judge again, run the following command (note this introduces costs on your OpenAI API):
-```
-python src/eval.py --pred_model toolgrad-1b \
-  --dataset ~/YOUR_DATASET_STORAGE_DIR/ToolGrad-5k/ \
-  --overwrite \
-  --num_process 16 
-```
-You should be able to see a new result with similar values of ours. Note that you can adjust the `num_process` dependent on your OpenAI API RPM.
-
+## ToolGrad-500
+This is a TODO.
 
 ## BibTex
 ```bibtex

@@ -1,0 +1,11 @@
+create_llm.temp = 1.0
+create_llm.provider = 'vertex'
+create_llm.model = 'gemini-2.5-flash-lite'
+create_llm.location = 'us-central1'
+
+get_llm_codename.name = "vertex_ai:gemini-2.5-flash-lite"
+
+# Gemini 2.5 Flash Lite pricing (Vertex AI usually matches AI Studio pricing)
+# Prices are in USD per 1 million tokens
+create_callback_handler.prompt_token_cost_per_million = 0.1
+create_callback_handler.completion_token_cost_per_million = 0.4

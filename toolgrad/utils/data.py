@@ -78,14 +78,15 @@ def replace_keyword(
       # Recursively process the value
       new_dict[new_key] = replace_keyword(value, old, new)
     return new_dict
+  # If it's a list, process each element
+  elif isinstance(data, list):
+    return [replace_keyword(item, old, new) for item in data]
   # If it's a string, perform the replacement
   elif isinstance(data, str):
     return data.replace(old, new)
 
-  else:
-    raise TypeError(
-        f"Unsupported data type: {type(data)}. Only dict and str are supported."
-    )
+  # For other types (int, float, bool, None), return as-is
+  return data
 
 
 def format_int_to_k_digits(num: int, k: int) -> str:

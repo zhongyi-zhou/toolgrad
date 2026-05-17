@@ -89,6 +89,7 @@ def api_caller(
     api_name: str,
     tool_input: Dict[str, Any],
     strip: str = "",
+    timeout: float = 10.0,
 ) -> Any:
   URL, headers, data = get_api_call_config(
       category=category,
@@ -98,7 +99,7 @@ def api_caller(
       strip=strip,
   )
 
-  with httpx.Client() as client:
+  with httpx.Client(timeout=httpx.Timeout(timeout=timeout)) as client:
     response = client.post(URL, headers=headers, json=data)
     response.raise_for_status()
     return response.json()
@@ -130,23 +131,31 @@ async def api_caller_async(
 
 def convert_api_args_type_into_python_type(
     type_str: str) -> Tuple[Type[Any], str]:
-  if type_str.upper() == "STRING":
+  type_str_upper = type_str.upper()
+  if type_str_upper == "STRING":
     return (str, '')
-  elif type_str.upper() == "BOOLEAN":
+  elif type_str_upper == "BOOLEAN":
     return (bool, '')
-  elif type_str.upper() == "NUMBER":
+  elif type_str_upper == "NUMBER":
     return (Union[float, int], '')
-  # There is some limitation in the current implementation below
-  # I have not walked though the whole dataset to verify whether
-  # the elements in the array are all string
-  elif type_str == 'ARRAY':
-    return (List[str], '')
+  elif type_str_upper == "FLOAT":
+    return (float, '')
+  elif type_str_upper in ['ARRAY', 'LIST']:
+    return (List[Any], '')
+  elif type_str_upper in ['OBJECT', 'DICT', 'JSON', 'MAP']:
+    return (Dict[str, Any], '')
+  elif type_str_upper in ['CREDENTIALS', 'SELECT', 'ENUM', 'DATEPICKER']:
+    return (str, '')
   elif type_str == "DATE (YYYY-MM-DD)":
     return (str, "date in the format of 'YYYY-MM-DD'")
   elif type_str == "GEOPOINT (latitude, longitude)":
     return (str, "geopoint in the format of 'latitude, longitude'")
   elif type_str == 'TIME (24-hour HH:MM)':
     return (str, "time in the format of '24-hour HH:MM'")
+  elif type_str_upper in ['DATE', 'DATETIME']:
+    return (str, '')
+  elif type_str_upper in ['FILE', 'BINARY']:
+    return (Any, '')
   else:
     return (str, '')
 
@@ -247,15 +256,15 @@ def get_formatted_time():
   return time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
 
 
-def get_valid_names():
-  print("Getting valid names...")
-  with resources.path("toolgrad.data.metadata",
-                      "filtered_v1.json") as json_path:
-    data = data.read_jsonl(str(json_path))
-  for category in data.keys():
-    for tool in data[category].keys():
+def get_valid_names(version: str = toolbench_data_utils.DEFAULT_VERSION):
+  print(f"Getting valid names for {version}...")
+  pkg = f"toolgrad.data.toolbench.{version}"
+  with resources.path(pkg, "data.json") as json_path:
+    data_dict = data.read_json(str(json_path))
+  for category in data_dict.keys():
+    for tool in data_dict[category].keys():
       _VALID_TOOL_NAMES.add(tool)
-      for api in data[category][tool]:
+      for api in data_dict[category][tool]:
         _VALID_API_NAMES.add(api)
   print("Done.")
 

@@ -11,6 +11,7 @@ def create_graph_on_toolbench(
     sample_seed: int,
     num_apis: int = 50,
     num_iterations: int = 10,
+    num_proposals: int = 3,
 ) -> StateGraph:
   graph = StateGraph(graph_lib.ToolGradState)
 
@@ -24,7 +25,10 @@ def create_graph_on_toolbench(
           num_apis=num_apis,
       ),
   )
-  graph.add_node("api_proposer", graph_lib.api_proposer)
+  graph.add_node(
+      "api_proposer",
+      functools.partial(graph_lib.api_proposer, num_proposals=num_proposals),
+  )
   graph.add_node("api_executor", graph_lib.api_executor)
   graph.add_node("api_selector", graph_lib.api_selector)
   graph.add_node("inverse_predictor", graph_lib.inverse_predictor)

@@ -7,7 +7,7 @@ name = "toolgrad"
 version = "0.1.1"
 description = "Official Repo for ToolGrad: Efficient Tool-use Dataset Generation with Textual “Gradients”"
 readme = "README.md"
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 license = { text = "CC-BY-4.0" }
 authors = [{ name = "Zhongyi Zhou" }]
 dependencies = [
@@ -19,6 +19,12 @@ dependencies = [
   "pydantic>=2.9.1",
   "langchain-community>0.3.17",
   "pytz>=2025.1",
+  "gin-config>=0.5.0",
+  "langchain-google-genai>=2.1.12",
+  "langchain-google-vertexai>=2.1.2",
+  "anthropic>=0.100.0",
+  "google-auth>=2.50.0",
+  "langchain-mcp-adapters>=0.2.2",
 ]
 [project.optional-dependencies]
 dev = ["pytest>=6.0", "yapf", "isort", "flake8"]
@@ -44,3 +50,8 @@ exclude = ["backups", "backups.*"]
 [tool.setuptools.package-data]
 "toolgrad.data.toolbench" = ["data/toolbench/*.json", "data/toolbench/*.jsonl"]
 "toolgrad.configs" = ["configs/*.gin"]
+
+[[tool.uv.index]]
+name = "pypi"
+url = "https://pypi.org/simple"
+default = true

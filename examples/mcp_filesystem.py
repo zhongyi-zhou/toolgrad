@@ -37,13 +37,21 @@ def create_args():
       default=123,
       help='Seed for sampling APIs.',
   )
+  parser.add_argument(
+      '--cfg',
+      type=str,
+      default='configs/gemini-2.5-lite.gin',
+      help='gin config file path',
+  )
   return parser.parse_args()
 
 
 if __name__ == '__main__':
   args = create_args()
-  cfg_path = "examples/configs/default.gin"
-  output_dir = "examples/outputs/"
+  # Make config path absolute relative to script directory
+  script_dir = os.path.dirname(os.path.abspath(__file__))
+  cfg_path = os.path.join(script_dir, args.cfg)
+  output_dir = os.path.join(script_dir, "outputs/")
 
   gin.parse_config_file(cfg_path)
   app = tog.prebuilt.create_graph_on_mcp(
@@ -60,6 +68,7 @@ if __name__ == '__main__':
       "recursion_limit": 1000,
   }
   # Use the Runnable
+  tracer = tog.utils.trace_utils.ExecutionTracer(output_dir=output_dir, seed=args.seed)
   initial = tog.modules.ToolGradState(
       workflow_cur=None,
       api_proposals=None,
@@ -67,8 +76,10 @@ if __name__ == '__main__':
       api_selection=None,
       step=0,
       sampled_apis=[],
+      tracer=tracer,
   )
   final_state = app.invoke(initial, config=cfg)
+  tracer.save()
   logging.info(f"LLM cost: {cb}")
 
   # Save the generated (query, workflow, response) to a JSON file
@@ -76,4 +87,4 @@ if __name__ == '__main__':
   save_path = f"{output_dir}/seed={args.seed}__iter={args.iter}__num_apis={args.num_apis}.json"
   os.makedirs(output_dir, exist_ok=True)
   with open(save_path, "w") as json_file:
-    json.dump(data_sample.dict(), json_file, indent=2)
+    json.dump(data_sample.model_dump(), json_file, indent=2)

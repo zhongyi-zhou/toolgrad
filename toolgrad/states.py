@@ -1,6 +1,8 @@
-from typing import List, Union, Tuple, Dict, Optional, Literal
+from typing import List, Union, Tuple, Dict, Optional, Literal, Any
 from pydantic import BaseModel, Field, create_model
-from langchain.agents.output_parsers.tools import ToolAgentAction
+from langchain_classic.agents.output_parsers.tools import ToolAgentAction
+
+_NUM_API_PROPOSALS = 3
 
 
 class ApiUseChainNode(BaseModel):
@@ -70,7 +72,11 @@ class ApiProposal(BaseModel):
   id: str = Field(description="a unique id for the proposal.")
   instruction: str = Field(
       description='a detailed instruction on how to use the proposed API(s).')
-  api: List[ApiUseChainNode] = Field(description='The proposed API list')
+  api: List[ApiUseChainNode] = Field(
+      description='The proposed API list',
+      max_length=
+      _NUM_API_PROPOSALS,  # Limit to max 3 APIs per proposal to prevent LLM hallucination
+  )
 
 
 def create_dedicated_apiproposal(api_node_model: ApiUseChainNode):
@@ -104,9 +110,9 @@ def create_dedicated_apiproposalall(api_proposal_model: ApiProposal):
 
 
 class ApiExecutionStep(ApiUseChainNode):
-  input: Optional[Dict[str, str]] = Field(
+  input: Optional[Dict[str, Any]] = Field(
       description=
-      "the query input of the api, if any. It should be in a dictionary format in which the keys are the parameters of this api and the values are stingified input. For example, to specify the input of a function that takes two api parameters, you can write {'param1': 'value1', 'param2': 'value2'}."
+      "the query input of the api, if any. It should be in a dictionary format in which the keys are the parameters of this api and the values are the inputs. For example, to specify the input of a function that takes two api parameters, you can write {'param1': 'value1', 'param2': 'value2'}."
   )
   name: str = Field(
       description=
@@ -145,6 +151,7 @@ class ApiUseChainBase(BaseModel):
   """The base class for an api-use chain."""
   intermediate_steps: Optional[List[Tuple[ToolAgentAction, Union[
       dict, str]]]] = Field(
+          # intermediate_steps: Optional[List[Tuple[dict, Union[dict, str]]]] = Field(
           default=[],
           description=
           'the intermediate steps of the api execution, if any. Use [] if there is no intermediate step.'
@@ -163,6 +170,7 @@ class ApiUseChainBase(BaseModel):
 class ApiUseChain(ApiUseChainBase):
   intermediate_steps: Optional[List[Tuple[ToolAgentAction, Union[
       dict, str]]]] = Field(
+          # intermediate_steps: Optional[List[Tuple[dict, Union[dict, str]]]] = Field(
           default=[],
           description=
           'the intermediate steps of the api execution, if any. Use [] if there is no intermediate step.'
@@ -182,6 +190,13 @@ class ApiUseWorkflow(BaseModel):
   )
 
 
+class WorkflowQueryResponse(BaseModel):
+  query: str = Field(
+      description="The user query that would trigger these API calls")
+  response: str = Field(
+      description="The agent's response synthesizing the API results")
+
+
 class ApiReport(BaseModel):
   id: str = Field(
       default="-1",
@@ -198,6 +213,14 @@ class ApiReport(BaseModel):
   description: str | None = Field(
       default=None,
       description="A natural language explanation of the api_call_step.",
+  )
+  num_tool_calls: int = Field(
+      default=0,
+      description="The number of intermediate tool calls made during execution.",
+  )
+  error_message: str | None = Field(
+      default=None,
+      description="Error message if the execution failed.",
   )
 
   class Config:

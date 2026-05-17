@@ -8,32 +8,31 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+DEFAULT_VERSION = os.getenv("TOOLBENCH_FILTER_VERSION", "v3")
 
-def get_valid_api_dict_list() -> list[dict[str, str]]:
+def get_valid_api_dict_list(version: str = DEFAULT_VERSION) -> list[dict[str, str]]:
   """Retrieve a list of valid API dictionaries.
 
   Returns:
       list[dict[str, str]]: A list of dictionaries containing category, tool, and api.
   """
-  with resources.path(
-      "toolgrad.data.toolbench",
-      "filtered_v1.jsonl",
-  ) as jsonl_path:
+  pkg = f"toolgrad.data.toolbench.{version}"
+  with resources.path(pkg, "data.jsonl") as jsonl_path:
     json_list = data.read_jsonl(jsonl_path)
   return json_list
 
 
-def get_tool_to_hash_prefix() -> dict[str, str]:
+def get_tool_to_hash_prefix(version: str = DEFAULT_VERSION) -> dict[str, str]:
   """Retrieve a mapping of tool names to their hash prefixes."""
-  with resources.path("toolgrad.data.toolbench",
-                      "tool_to_hash_prefix.json") as json_path:
+  pkg = f"toolgrad.data.toolbench.{version}"
+  with resources.path(pkg, "tool_to_hash_prefix.json") as json_path:
     return data.read_json(str(json_path))
 
 
-def get_hash_to_tool_prefix() -> dict[str, str]:
+def get_hash_to_tool_prefix(version: str = DEFAULT_VERSION) -> dict[str, str]:
   """Retrieve a mapping of hash prefixes to their tool names."""
-  with resources.path("toolgrad.data.toolbench",
-                      "hash_to_tool_prefix.json") as json_path:
+  pkg = f"toolgrad.data.toolbench.{version}"
+  with resources.path(pkg, "hash_to_tool_prefix.json") as json_path:
     return data.read_json(str(json_path))
 
 

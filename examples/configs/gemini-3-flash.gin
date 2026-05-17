@@ -1,0 +1,11 @@
+create_llm.temp = 1.0
+create_llm.provider = 'google'
+create_llm.model = 'gemini-3-flash-preview'
+create_llm.location = 'global'
+
+get_llm_codename.name = "google_genai:gemini-3-flash-preview"
+
+# Gemini 3 Flash pricing (update based on actual Google pricing)
+# Prices are in USD per 1 million tokens
+create_callback_handler.prompt_token_cost_per_million = 0.5
+create_callback_handler.completion_token_cost_per_million = 3.0

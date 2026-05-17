@@ -1,10 +1,11 @@
 """This file contains main graph-level modules in the ToolGrad framework, as shown in Figure 2 of the ToolGrad paper."""
 import logging
 import random
-from typing import Literal, Union
+from typing import Literal, Union, Optional
 from enum import Enum
 
-from langchain.tools import StructuredTool
+from langchain_core.tools import StructuredTool
+from pydantic import ConfigDict
 
 from toolgrad.modules import module_lib
 from toolgrad.utils import langchain
@@ -12,6 +13,7 @@ from toolgrad.utils import log_utils
 from toolgrad.utils.toolbench import toolbench_langchain_utils
 from toolgrad import states
 from toolgrad.utils import mcp
+from toolgrad.utils import trace_utils
 
 __all__ = [
     'ToolGradState',
@@ -28,9 +30,13 @@ class SpecialStates(Enum):
 # State
 class ToolGradState(states.ApiUseState):
   """A state class for ToolGrad, inheriting from ApiUseState."""
+  model_config = ConfigDict(arbitrary_types_allowed=True)
+
   step: int = 0
   sampled_apis: list[StructuredTool] = []
   should_early_next_iter: bool = False
+  total_tool_calls: int = 0
+  tracer: Optional[trace_utils.ExecutionTracer] = None
 
 
 # Modules
@@ -48,6 +54,10 @@ def sample_apis_or_end(
   toolgrad_state.step += 1
   toolgrad_state.should_early_next_iter = False
   random.seed(api_sample_seed * max_iter + toolgrad_state.step)
+
+  # Start iteration trace
+  if toolgrad_state.tracer:
+    toolgrad_state.tracer.start_iteration(toolgrad_state.step)
   # Sample APIs
   if database == 'mcp':
     mcp_dict = mcp.get_default_mcp_dict() if mcp_dict is None else mcp_dict
@@ -66,6 +76,7 @@ def sample_apis_or_end(
 def api_proposer(
     toolgrad_state: ToolGradState,
     is_toolbench: bool = True,
+    num_proposals: int = 3,
 ) -> Union[ToolGradState, str]:
   """Propose APIs based on the current state.
   
@@ -73,26 +84,48 @@ def api_proposer(
   """
 
   api_proposal_model = module_lib.create_api_proposer(
-      toolgrad_state.sampled_apis)
+      toolgrad_state.sampled_apis,
+      is_mcp=not is_toolbench,
+      num_proposals=num_proposals,
+  )
 
   all_api_annotations = module_lib.get_all_tool_annotations(
       toolgrad_state.sampled_apis)
-  dedicated_api_proposals = api_proposal_model.invoke({
-      "workflow_cur": toolgrad_state.workflow_cur,
-      "api_all": all_api_annotations,
-  })
+  try:
+    dedicated_api_proposals = api_proposal_model.invoke({
+        "workflow_cur": toolgrad_state.workflow_cur,
+        "api_all": all_api_annotations,
+    })
+  except Exception as e:
+    logging.warning(
+        f"API proposal model invocation failed: {e}. Skip this step.")
+    toolgrad_state.should_early_next_iter = True
+    return toolgrad_state
+
+  # Validate the output before conversion
+  if dedicated_api_proposals is None:
+    logging.warning("API proposal model returned None. Skip this step.")
+    toolgrad_state.should_early_next_iter = True
+    return toolgrad_state
+
   api_proposals = module_lib.convert_dedicated_apiproposals_to_standard_apiproposals(
       dedicated_api_proposals)
   if api_proposals is None or api_proposals == {}:
     logging.warning("No API proposals were generated. Skip this step.")
     toolgrad_state.should_early_next_iter = True
     return toolgrad_state
+
+  # Post-process proposals: convert hash names to real names in both API names and instructions
   if is_toolbench:
-    for proposal in api_proposals.proposals:
-      for api in proposal.api:
-        api.name = toolbench_langchain_utils.HASH_TO_TOOLNAME.get(
-            f'{api.name}', '')
+    api_proposals = toolbench_langchain_utils.postprocess_proposalall(
+        api_proposals, convert_hash_to_name=True)
+
   toolgrad_state.api_proposals = api_proposals
+
+  # Trace proposals
+  if toolgrad_state.tracer:
+    toolgrad_state.tracer.log_proposals(api_proposals)
+
   return toolgrad_state
 
 
@@ -112,6 +145,14 @@ def api_executor(
     logging.warning("No API reports are generated. Skip the iteration.")
     toolgrad_state.should_early_next_iter = True
     return toolgrad_state
+  # Count all tool calls from all proposals (both success and failure)
+  for report in api_reports.values():
+    toolgrad_state.total_tool_calls += report.num_tool_calls
+
+  # Trace executions
+  if toolgrad_state.tracer:
+    toolgrad_state.tracer.log_executions(api_reports)
+
   if all(not report.success for report in api_reports.values()):
     logging.warning("All APIs failed to execute. Skip the iteration.")
     toolgrad_state.should_early_next_iter = True
@@ -140,10 +181,17 @@ def api_selector(toolgrad_state: ToolGradState,) -> ToolGradState | str:
           id_list=id_list,
           chain_keys=chain_keys,
       ))
-  api_selection = api_selector.invoke({
-      "workflow_cur": toolgrad_state.workflow_cur,
-      "api_reports": api_reports,
-  })
+  try:
+    api_selection = api_selector.invoke({
+        "workflow_cur": toolgrad_state.workflow_cur,
+        "api_reports": api_reports,
+    })
+  except Exception as ve:
+    logging.warning(
+        f"API selection validation error: {ve}. Skip the iteration.")
+    # return EARLY_NEXT_STEP
+    toolgrad_state.should_early_next_iter = True
+    return toolgrad_state
 
   if api_selection is None:
     logging.warning("No valid API selection made.")
@@ -157,6 +205,12 @@ def api_selector(toolgrad_state: ToolGradState,) -> ToolGradState | str:
     return toolgrad_state
   # logging.info(f"Selected APIs: {api_selection}")
   toolgrad_state.api_selection = api_selection
+
+  # Trace selection
+  if toolgrad_state.tracer:
+    selected_report = api_reports[api_selection.id]
+    toolgrad_state.tracer.log_selection(api_selection, selected_report)
+
   return toolgrad_state
 
 
@@ -190,10 +244,6 @@ def inverse_predictor(toolgrad_state: ToolGradState,) -> ToolGradState:
   new_chain = chain_update_result["chain"]
   assert isinstance(new_chain, states.ApiUseChain)
 
-  predict_model = langchain.remove_fields_from_model(
-      states.ApiUseWorkflow,
-      exclude_fields=['api_use_chains'],
-      name='ApiUseWorkflowIO')
   if workflow_cur is None:
     # Create a new workflow from a single chain if the workflow does not exist
     chains_new = {new_chain.chain_id: new_chain}
@@ -210,14 +260,30 @@ def inverse_predictor(toolgrad_state: ToolGradState,) -> ToolGradState:
       raise ValueError(
           f"No valid chain to update. Got {which_chain}, expected a valid chain ID {workflow_cur.api_use_chains.keys()} or '-1'."
       )
-  workflow_updater = module_lib.create_workflow_updater(
-      output_schema=predict_model)
-  partial_workflow = workflow_updater.invoke({
-      "api_use_chains": chains_new,
+  # LLM generates only query and response (not api_use_chains)
+  workflow_updater = module_lib.create_workflow_updater()
+  llm_output = workflow_updater.invoke({
+      "api_use_chains": chains_new,  # Passed for context only
   })
-  workflow_cur = states.ApiUseWorkflow(api_use_chains=chains_new,
-                                       **partial_workflow.model_dump())
+
+  # Validate the output before using it
+  if llm_output is None:
+    logging.warning("Workflow updater model returned None. Skip this step.")
+    toolgrad_state.should_early_next_iter = True
+    return toolgrad_state
+
+  # Combine LLM-generated query/response with actual execution chains
+  workflow_cur = states.ApiUseWorkflow(
+      api_use_chains=chains_new,  # Use actual execution chains
+      query=llm_output.query,  # LLM-generated query
+      response=llm_output.response  # LLM-generated response
+  )
   toolgrad_state.workflow_cur = workflow_cur
+
+  # Trace workflow update
+  if toolgrad_state.tracer:
+    toolgrad_state.tracer.log_workflow_update(workflow_cur)
+
   return toolgrad_state
 
 
