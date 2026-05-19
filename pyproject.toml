@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "toolgrad"
-version = "0.1.1"
+version = "0.2.0"
 description = "Official Repo for ToolGrad: Efficient Tool-use Dataset Generation with Textual “Gradients”"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -26,6 +26,12 @@ dependencies = [
   "google-auth>=2.50.0",
   "langchain-mcp-adapters>=0.2.2",
 ]
+
+[project.urls]
+Homepage = "https://github.com/zhongyi-zhou/toolgrad"
+Repository = "https://github.com/zhongyi-zhou/toolgrad.git"
+"Bug Tracker" = "https://github.com/zhongyi-zhou/toolgrad/issues"
+
 [project.optional-dependencies]
 dev = ["pytest>=6.0", "yapf", "isort", "flake8"]
 
@@ -48,8 +54,7 @@ include = ["toolgrad", "toolgrad.*"]
 exclude = ["backups", "backups.*"]
 
 [tool.setuptools.package-data]
-"toolgrad.data.toolbench" = ["data/toolbench/*.json", "data/toolbench/*.jsonl"]
-"toolgrad.configs" = ["configs/*.gin"]
+"toolgrad.data.toolbench.v3" = ["*.json", "*.jsonl"]
 
 [[tool.uv.index]]
 name = "pypi"
