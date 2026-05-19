@@ -8,8 +8,8 @@
 > [!WARNING]
 > **Notes**: The current repo contains out-of-dated code. We will actively update the repo to align with our paper on ACL 2026. The following is a roadmap.
 > 
-> - [ ] Update data generation pipeline
-> - [ ] Update toolgrad package
+> - [x] Update data generation pipeline
+> - [x] Update toolgrad package
 > - [ ] post-training code
 > - [ ] evaluate code
 
