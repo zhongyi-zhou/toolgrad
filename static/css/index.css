@@ -62,12 +62,14 @@ body {
     color: #555;
     width: fit-content;
     font-weight: bold;
+    margin: 0 auto;
 }
 
 .publication-awards {
     color: #ff3860;
     width: fit-content;
     font-weight: bolder;
+    margin: 0 auto;
 }
 
 .publication-authors {
