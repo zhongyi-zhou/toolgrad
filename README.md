@@ -3,6 +3,10 @@
 [![GitHub license](https://img.shields.io/badge/License-Apache_2.0-blue.svg)][#license]
 [![Arxiv](https://img.shields.io/badge/arXiv-2508.04086-B31B1B.svg)][#arxiv-paper] 
 [![PyPI](https://img.shields.io/static/v1?label=PyPI&message=toolgrad&color=lightgrey)][#pypi-package] 
+[![Dataset on HF](https://img.shields.io/badge/Dataset-on%20Hugging%20Face-FF6C37?logo=HuggingFace)][#dataset-hf]
+[![ToolGrad-1B on HF](https://img.shields.io/badge/ToolGrad--1B-on%20Hugging%20Face-FF6C37?logo=HuggingFace)][#model-1b-hf]
+[![ToolGrad-4B on HF](https://img.shields.io/badge/ToolGrad--4B-on%20Hugging%20Face-FF6C37?logo=HuggingFace)][#model-4b-hf]
+[![ToolGrad-12B on HF](https://img.shields.io/badge/ToolGrad--12B-on%20Hugging%20Face-FF6C37?logo=HuggingFace)][#model-12b-hf]
 <!-- Replace the PyPI badge with ToolGrad later -->
 
 > [!WARNING]
@@ -13,20 +17,15 @@
 > - [ ] post-training code
 > - [ ] evaluate code
 
-
-TODOs:
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](#colab)
-[![Dataset on HF](https://img.shields.io/badge/Dataset-on%20Hugging%20Face-FF6C37?logo=HuggingFace)][#dataset-hf]
-[![Model on HF](https://img.shields.io/badge/Model-on%20Hugging%20Face-FF6C37?logo=HuggingFace)][#model-hf]
-
-
 <!-- Replace the PyPI link with ToolGrad later -->
 [#pypi-package]: https://pypi.org/project/toolgrad
 [#license]: LICENSE
 [#arxiv-paper]: http://arxiv.org/abs/2508.04086
 
-[#dataset-hf]: https://huggingface.co/datasets/
-[#model-hf]: https://huggingface.co/models/
+[#dataset-hf]: https://huggingface.co/datasets/zhongyi-zhou/toolgrad-500
+[#model-1b-hf]: https://huggingface.co/zhongyi-zhou/toolgrad-1b
+[#model-4b-hf]: https://huggingface.co/zhongyi-zhou/toolgrad-4b
+[#model-12b-hf]: https://huggingface.co/zhongyi-zhou/toolgrad-12b
 
 <!--- BADGES: END --->
 
@@ -102,8 +101,16 @@ INFO:root:      Input: {'path': '.'}
 
 After the execution, you should be able to see the output data in [examples/outputs/](examples/outputs/). It should look similar to [examples/outputs/trace_example/00123.json](examples/outputs/trace_example/00123.json) and [examples/outputs/example_seed=123__iter=3__num_apis=5.json](examples/outputs/example_seed=123__iter=3__num_apis=5.json).
 
-## ToolGrad-500
-This is a TODO.
+## ToolGrad-500 and ToolGrad Models
+We release our dataset, model checkpoints, and collection on Hugging Face:
+- **Hugging Face Collection:** [zhongyi-zhou/toolgrad](https://huggingface.co/collections/zhongyi-zhou/toolgrad)
+- **Dataset:** [zhongyi-zhou/toolgrad-500](https://huggingface.co/datasets/zhongyi-zhou/toolgrad-500)
+- **Model Checkpoints:**
+  - [ToolGrad-1B](https://huggingface.co/zhongyi-zhou/toolgrad-1b)
+  - [ToolGrad-4B](https://huggingface.co/zhongyi-zhou/toolgrad-4b)
+  - [ToolGrad-12B](https://huggingface.co/zhongyi-zhou/toolgrad-12b)
+
+
 
 ## BibTex
 ```bibtex
