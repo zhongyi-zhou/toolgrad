@@ -31,6 +31,9 @@ This is the official repository for **ToolGrad: Efficient Tool-use Dataset Gener
 
 ## Part I: A Quick ToolGrad Framework Demo
 
+
+> **No GPU required.** **No ToolBench API Key required.**
+
 ### 1. Setup Environment
 Clone the repository and initialize the Python virtual environment:
 ```bash
@@ -85,9 +88,13 @@ To run ToolGrad on a Model Context Protocol (MCP) filesystem service:
 
     After execution, you should be able to see the output data in the [examples/outputs/](examples/outputs/) folder (which will look similar to [examples/outputs/trace_example/00123.json](examples/outputs/trace_example/00123.json) and [examples/outputs/example_seed=123__iter=3__num_apis=5.json](examples/outputs/example_seed=123__iter=3__num_apis=5.json)).
 
+    *If the demo works for you, please consider giving us a star! ⭐*
+
 ---
 
 ## Part II: Reproduction
+
+> This part **requires a GPU** (verified on a single NVIDIA A100-40GB GPU).
 
 This section details how to reproduce our evaluation scores on the BFCL V4 benchmark and how to post-train Gemma 3 models on the ToolGrad-500 dataset.
 
@@ -162,6 +169,9 @@ python src/train/train_sft.py \
 ---
 
 ## Part III: Generating your own ToolGrad-500
+
+
+> This part **requires a ToolBench API key**, which may take time to be issued.
 
 ### 1. Generating Raw ToolGrad Workflows
 To generate the raw workflow files, we execute the `src/generate_toolgrad_data.py` script.
