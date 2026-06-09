@@ -25,6 +25,7 @@ dependencies = [
   "anthropic>=0.100.0",
   "google-auth>=2.50.0",
   "langchain-mcp-adapters>=0.2.2",
+  "huggingface-hub>=0.20.0",
 ]
 
 [project.urls]
