@@ -1,8 +1,8 @@
-# ToolGrad: Efficient Tool-use Dataset Generation with Textual "Gradients" (ACL 2026 Finding)
+# ToolGrad: Efficient Tool-use Dataset Generation with Textual "Gradients" (ACL 2026 Findings)
 <!--- BADGES: START --->
 [![GitHub license](https://img.shields.io/badge/License-Apache_2.0-blue.svg)][#license]
-[![Arxiv](https://img.shields.io/badge/arXiv-2508.04086-B31B1B.svg)][#arxiv-paper] 
-[![PyPI](https://img.shields.io/static/v1?label=PyPI&message=toolgrad&color=lightgrey)][#pypi-package] 
+[![Arxiv](https://img.shields.io/badge/arXiv-2508.04086-B31B1B.svg)][#arxiv-paper]
+[![PyPI](https://img.shields.io/static/v1?label=PyPI&message=toolgrad&color=lightgrey)][#pypi-package]
 [![Dataset on HF](https://img.shields.io/badge/Dataset-on%20Hugging%20Face-FF6C37?logo=HuggingFace)][#dataset-hf]
 [![ToolGrad-1B on HF](https://img.shields.io/badge/ToolGrad--1B-on%20Hugging%20Face-FF6C37?logo=HuggingFace)][#model-1b-hf]
 [![ToolGrad-4B on HF](https://img.shields.io/badge/ToolGrad--4B-on%20Hugging%20Face-FF6C37?logo=HuggingFace)][#model-4b-hf]
@@ -108,7 +108,7 @@ git submodule update --init --recursive
 ```
 
 #### Step 1.2: Run Evaluation inside Docker
-Local inference is run inside a GPU-enabled Docker container using the official `vllm/vllm-openai:v0.22.1-cu129` image. 
+Local inference is run inside a GPU-enabled Docker container using the official `vllm/vllm-openai:v0.22.1-cu129` image.
 
 > [!NOTE]
 > This evaluation setup has been verified on a single **NVIDIA A100-SXM4-40GB** GPU.
@@ -249,12 +249,12 @@ python src/data/toolbench/filter_long_samples.py \
 ## BibTeX Citation
 ```bibtex
 @misc{zhou2025toolgradefficienttoolusedataset,
-      title={ToolGrad: Efficient Tool-use Dataset Generation with Textual "Gradients"}, 
+      title={ToolGrad: Efficient Tool-use Dataset Generation with Textual "Gradients"},
       author={Zhongyi Zhou and Kohei Uehara and Haoyu Zhang and Jingtao Zhou and Lin Gu and Ruofei Du and Zheng Xu and Tatsuya Harada},
       year={2025},
       eprint={2508.04086},
       archivePrefix={arXiv},
       primaryClass={cs.CL},
-      url={https://arxiv.org/abs/2508.04086}, 
+      url={https://arxiv.org/abs/2508.04086},
 }
 ```
