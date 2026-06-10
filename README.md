@@ -96,10 +96,10 @@ To run ToolGrad on a Model Context Protocol (MCP) filesystem service:
 
 > This part **requires a GPU** (verified on a single NVIDIA A100-40GB GPU).
 
-This section details how to reproduce our evaluation scores on the BFCL V4 benchmark and how to post-train Gemma 3 models on the ToolGrad-500 dataset.
+This section details how to reproduce our evaluation scores on the BFCL V1 & V2 benchmark and how to post-train Gemma 3 models on the ToolGrad-500 dataset.
 
 ### 1. Reproducing BFCL Evaluation Results
-To evaluate ToolGrad models on the Berkeley Function Calling Leaderboard (BFCL) V4:
+To evaluate ToolGrad models on the Berkeley Function Calling Leaderboard (BFCL) V1 & V2:
 
 #### Step 1.1: Setup BFCL Submodule
 The evaluation framework uses our customized fork of BFCL. Initialize the submodule:
