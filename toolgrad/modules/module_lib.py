@@ -51,15 +51,15 @@ def _is_recursively_empty(val: Any) -> bool:
   """Checks if a value is recursively empty (e.g. {'a': [], 'b': {}})."""
   if _is_empty_value(val):
     return True
-  
+
   if isinstance(val, dict):
     # It's empty if all its values are recursively empty
     return all(_is_recursively_empty(v) for v in val.values())
-  
+
   if isinstance(val, list):
     # It's empty if all its items are recursively empty
     return all(_is_recursively_empty(v) for v in val)
-    
+
   return False
 
 
@@ -127,7 +127,7 @@ def _contains_error_keywords(text: str) -> tuple[bool, str]:
   """
   Check if text contains error keywords.
   Shared logic for both plain text and pattern-based error detection.
-  
+
   Returns:
     (has_error, error_reason): Tuple indicating if error found and the reason
   """
@@ -207,7 +207,7 @@ def _contains_error_keywords(text: str) -> tuple[bool, str]:
 def _check_error_fields_case_insensitive(parsed: dict) -> tuple[bool, str]:
   """
   Check for error-indicating fields in JSON, case-insensitively.
-  
+
   Returns:
     (has_error, error_reason): Tuple indicating if error found and the reason
   """
@@ -276,7 +276,7 @@ def _is_single_key_empty_value(parsed: dict) -> bool:
 def _check_empty_structures(parsed: dict) -> tuple[bool, str]:
   """
   Check for various empty structure patterns that indicate API failures.
-  
+
   Returns:
     (is_empty, error_reason): Tuple indicating if response is effectively empty
   """
@@ -321,10 +321,10 @@ def validate_api_response(
 ) -> tuple[bool, str]:
   """
   Validate if an API response is actually successful.
-  
+
   Many ToolBench APIs return valid HTTP responses (error="") but embed error
   messages in the response content. This function detects such hidden errors.
-  
+
   Validation sequence:
     1. Check explicit error_msg parameter
     2. Check for empty/whitespace responses
@@ -337,12 +337,12 @@ def validate_api_response(
        - Error fields (case-insensitive)
        - Empty structure patterns
     7. Fallback pattern matching for edge cases
-  
+
   Args:
     response: The API response content
     api_name: Name of the API being called
     error_msg: The error field from the result dict
-  
+
   Returns:
     (is_valid, error_reason): Tuple indicating if response is valid and why if not
   """
@@ -365,16 +365,16 @@ def validate_api_response(
   # 4. Check for plain text error messages (before JSON parsing)
   # Common pattern: APIs return error as plain text instead of JSON
   response_stripped = response.strip()
-  
+
   # 4.1 Check for HTML/XML error pages (enhanced)
   # Check for common HTML/XML start tags
   if response_stripped.startswith(('<!DOCTYPE', '<html', '<head', '<body', '<?xml', '<QUOTE', '<ERROR')):
     return False, "HTML/XML error page returned instead of JSON"
-  
+
   # Also check for specific HTML tags if they appear at start (ignoring whitespace)
   if response_stripped.lower().startswith(('<html>', '<!doctype html>', '<?xml')):
     return False, "HTML/XML error page returned instead of JSON"
-    
+
   # 4.2 Check for explicit error strings
   explicit_error_strings = [
       'Payment required',
@@ -408,7 +408,7 @@ def validate_api_response(
     has_error, reason = _contains_error_keywords(response_stripped)
     if has_error:
       return False, reason
-    
+
     # If it's not JSON and not flagged by keywords, it might still be an error if it's just a short string
     # But we should be careful not to flag valid plain text responses if they exist
     # For now, relying on _contains_error_keywords and explicit_error_strings
@@ -466,22 +466,22 @@ def _validate_parsed_json(parsed: Any) -> tuple[bool, str]:
     # e.g. {'status': 'OK', 'data': {}} -> effectively empty
     metadata_keys = {
         'status', 'code', 'statuscode', 'status_code', 'cod', 't-status',
-        'success', 'ok', 
-        'request_id', 'requestid', 
+        'success', 'ok',
+        'request_id', 'requestid',
         'message', 'msg', # Often just "Success" or "OK" if status is good
         'at', 'method', 'hostname', # Default server response metadata
         'last_page', 'total', 'count', 'offset', 'limit', 'page', # Pagination metadata
     }
-    
+
     # Filter out metadata keys
     content_keys = [k for k in parsed.keys() if str(k).lower() not in metadata_keys]
-    
+
     if len(content_keys) == 0:
-      # Only metadata keys present. 
+      # Only metadata keys present.
       # If we are here, it means no explicit error was found (e.g. status was 200/OK).
       # But if there's no data, it's likely a useless response for the model.
       return False, "API returned only metadata/status fields with no content"
-      
+
     if len(content_keys) == 1:
       # Only one content key, check if it's empty
       key = content_keys[0]
@@ -493,17 +493,17 @@ def _validate_parsed_json(parsed: Any) -> tuple[bool, str]:
     has_error, reason = _check_error_fields_case_insensitive(parsed)
     if has_error:
       return False, reason
-      
+
     # Enhanced JSON Validation
     # Check for success/ok/status fields
     # Check 'success': False/false
     if 'success' in parsed and str(parsed['success']).lower() == 'false':
       return False, "JSON 'success' field is false"
-      
+
     # Check 'ok': False/false
     if 'ok' in parsed and str(parsed['ok']).lower() == 'false':
       return False, "JSON 'ok' field is false"
-      
+
     # Check 'status' or 'code' indicating error
     # Common error codes: 4xx, 5xx, 0 (sometimes), "error", "failed"
     for status_field in ['status', 'code', 'statusCode', 'status_code', 'cod', 't-status']:
@@ -512,7 +512,7 @@ def _validate_parsed_json(parsed: Any) -> tuple[bool, str]:
         val_str = str(val).lower()
         if val_str in ['error', 'failed', 'failure']:
            return False, f"JSON '{status_field}' indicates error: {val}"
-        
+
         # Check for numeric error codes (400+)
         try:
           val_int = int(val)
@@ -539,7 +539,7 @@ def _validate_parsed_json(parsed: Any) -> tuple[bool, str]:
     is_empty, reason = _check_empty_structures(parsed)
     if is_empty:
       return False, reason
-      
+
   return True, ""
 
 
@@ -582,7 +582,7 @@ def get_success_execution_id_legacy(
 
 def track_tool_invocation(tracker: dict):
   """Decorator that wraps a tool function to track when it's called.
-  
+
   Args:
     tracker: A dict with 'called' key to mark invocation (mutable state)
   """
@@ -612,11 +612,11 @@ def track_tool_invocation(tracker: dict):
 def wrap_tool_with_tracking(tool: StructuredTool,
                             tracker: dict) -> StructuredTool:
   """Wrap a LangChain tool with invocation tracking using a decorator.
-  
+
   Args:
     tool: The original StructuredTool
     tracker: A dict with 'called' key to track invocation
-  
+
   Returns:
     A new StructuredTool with decorated function
   """
@@ -768,7 +768,6 @@ def save_generation(
 def get_literal_api_proposals_pydantic_model(
     apis: List[StructuredTool]) -> states.ApiProposalAll:
   """Get a more strict Pydantic model of `ApiProposal` with literal constraints.
-    
     The `Literal` constrains what it can propose based on self.apis values in the current timstamp."""
   apiuse_chainnode_customized = states.create_dedicated_apiusechainnode(
       allowed_values=[api.name for api in apis])
@@ -837,7 +836,7 @@ def create_api_executor(
     # Use the toolgrad package path to locate the filesystem directory
     toolgrad_root = tog.__path__[0]
     filesystem_workspace = os.path.join(toolgrad_root, "utils", "filesystem")
-    system_prompt = f"""You are a helpful assistant. 
+    system_prompt = f"""You are a helpful assistant.
 
 IMPORTANT: Your filesystem tools ONLY have access to files within the allowed directory.
 
@@ -847,7 +846,7 @@ DO NOT use absolute paths - they will be rejected."""
     system_prompt = "You are a helpful assistant."
   prompt = ChatPromptTemplate.from_messages([
       ("system", system_prompt),
-      ("human", prompt_lib.API_EXECUTOR.format(plan="{plan}")),
+      ("human", prompt_lib.API_EXECUTOR.messages[0].prompt.template),
       ("placeholder", "{agent_scratchpad}"),
   ])
   agent = create_tool_calling_agent(llm, apis_in_one_proposal, prompt)
@@ -1162,7 +1161,7 @@ def chain_update_step(
 
 def create_workflow_updater():
   """Create a workflow updater that generates query and response only.
-  
+
   Note: This returns only query/response fields, not api_use_chains.
   The caller must combine LLM output with actual execution chains.
   """

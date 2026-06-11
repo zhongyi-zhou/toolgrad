@@ -1,0 +1,47 @@
+cff-version: 1.2.0
+message: "If you use ToolGrad in your research, please cite the following paper."
+title: 'ToolGrad: Efficient Tool-use Dataset Generation with Textual "Gradients"'
+authors:
+  - family-names: Zhou
+    given-names: Zhongyi
+  - family-names: Uehara
+    given-names: Kohei
+  - family-names: Zhang
+    given-names: Haoyu
+  - family-names: Zhou
+    given-names: Jingtao
+  - family-names: Gu
+    given-names: Lin
+  - family-names: Du
+    given-names: Ruofei
+  - family-names: Xu
+    given-names: Zheng
+  - family-names: Harada
+    given-names: Tatsuya
+repository-code: "https://github.com/zhongyi-zhou/toolgrad"
+url: "https://arxiv.org/abs/2508.04086"
+license: Apache-2.0
+preferred-citation:
+  type: conference-paper
+  title: 'ToolGrad: Efficient Tool-use Dataset Generation with Textual "Gradients"'
+  authors:
+    - family-names: Zhou
+      given-names: Zhongyi
+    - family-names: Uehara
+      given-names: Kohei
+    - family-names: Zhang
+      given-names: Haoyu
+    - family-names: Zhou
+      given-names: Jingtao
+    - family-names: Gu
+      given-names: Lin
+    - family-names: Du
+      given-names: Ruofei
+    - family-names: Xu
+      given-names: Zheng
+    - family-names: Harada
+      given-names: Tatsuya
+  collection-title: "Findings of the Association for Computational Linguistics: ACL 2026"
+  year: 2026
+  doi: 10.48550/arXiv.2508.04086
+  url: "https://arxiv.org/abs/2508.04086"

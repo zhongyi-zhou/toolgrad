@@ -21,7 +21,7 @@ def create_dedicated_apiusechainnode(allowed_values: List[str]):
 
   DedicatedApiUseChainNode = create_model(
       'DedicatedApiUseChainNode',  # Name of the new model
-      name=(literal_type, Field(description=description)),  # Override 
+      name=(literal_type, Field(description=description)),  # Override
       __base__=ApiUseChainNode  # inherit from OriginalModel
   )
   return DedicatedApiUseChainNode
@@ -84,7 +84,7 @@ def create_dedicated_apiproposal(api_node_model: ApiUseChainNode):
   description = ApiProposal.model_fields['api'].description
   return create_model(
       'DedicatedApiProposal',  # Name of the new model
-      api=(List[api_node_model], Field(description=description)),  # Override 
+      api=(List[api_node_model], Field(description=description)),  # Override
       __base__=ApiProposal  # inherit from OriginalModel
   )
   # return DedicatedApiProposal
@@ -104,7 +104,7 @@ def create_dedicated_apiproposalall(api_proposal_model: ApiProposal):
   return create_model(
       'DedicatedApiProposalAll',  # Name of the new model
       proposals=(List[api_proposal_model],
-                 Field(description=description)),  # Override 
+                 Field(description=description)),  # Override
       __base__=ApiProposalAll  # inherit from OriginalModel
   )
 
@@ -141,7 +141,7 @@ def create_apiexecutionvalidation(allowed_values: List[str]):
 
   ApiExecutionValidation = create_model(
       'ApiExecutionValidation',  # Name of the new model
-      step_key=(literal_type, Field(description=description)),  # Override 
+      step_key=(literal_type, Field(description=description)),  # Override
       __base__=ApiExecutionValidatorBase  # inherit from OriginalModel
   )
   return ApiExecutionValidation
