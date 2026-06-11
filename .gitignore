@@ -1,5 +1,6 @@
+examples/outputs/
 output/
-./data/
+/data/
 *backups/
 .DS_Store
 # Byte-compiled / optimized / DLL files
