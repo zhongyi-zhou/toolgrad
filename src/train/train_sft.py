@@ -217,7 +217,15 @@ logger.info(f"DEBUG: os.environ.get('ACCELERATE_USE_FSDP') = {os.environ.get('AC
 logger.info(f"DEBUG: training_args.gradient_checkpointing = {training_args.gradient_checkpointing}")
 
 
-attn_implementation = "flash_attention_2"
+# flash_attention_2 needs the flash-attn package, which has no prebuilt wheels on
+# some platforms (e.g. Windows). Fall back to PyTorch's SDPA kernel when it is missing.
+import importlib.util
+if importlib.util.find_spec("flash_attn") is not None:
+  attn_implementation = "flash_attention_2"
+else:
+  attn_implementation = "sdpa"
+  logger.warning(
+      "flash-attn not installed; falling back to attn_implementation='sdpa'.")
 
 
 if args.local_model and os.path.exists(args.local_model):
